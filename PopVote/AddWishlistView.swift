@@ -1,10 +1,3 @@
-//
-//  AddWishlistView.swift
-//  PopVote
-//
-//  Created by Mattia Rizza on [Data Odierna].
-//
-
 import SwiftUI
 import PhotosUI
 import SwiftData

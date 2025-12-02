@@ -1,10 +1,3 @@
-//
-//  CustomFolderSelectionView.swift
-//  PopVote
-//
-//  Created by Mattia Rizza on 03/11/25.
-//
-
 import SwiftUI
 import SwiftData
 

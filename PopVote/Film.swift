@@ -1,10 +1,3 @@
-//
-//  Film.swift
-//  PopVote
-//
-//  Created by Mattia Rizza on 02/11/25.
-//
-
 import Foundation
 import SwiftData
 

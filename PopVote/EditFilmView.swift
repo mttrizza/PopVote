@@ -1,10 +1,3 @@
-//
-//  EditFilmView.swift
-//  PopVote
-//
-//  Created by Mattia Rizza on 04/11/25.
-//
-
 import SwiftUI
 import PhotosUI
 import SwiftData

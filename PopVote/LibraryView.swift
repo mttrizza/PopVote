@@ -1,10 +1,3 @@
-//
-//  LibraryView.swift
-//  PopVote
-//
-//  Created by Mattia Rizza on 31/10/25.
-//
-
 import SwiftUI
 import PhotosUI
 import SwiftData
