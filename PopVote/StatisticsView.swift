@@ -1,11 +1,20 @@
+
+//
+//  StatisticsView.swift
+//  PopVote
+//
+//  Created by Mattia Rizza on [Data Odierna].
+//
+
 import SwiftUI
 import SwiftData
 
 struct StatisticsView: View {
     
-    @Query private var allFilms: [Film]
+    // Ordiniamo i film per voto decrescente (dal più alto al più basso)
+    @Query(sort: \Film.rating, order: .reverse) private var allFilms: [Film]
     
-    // Calcolo Durata Totale
+    // --- CALCOLI STATISTICHE ---
     var totalDurationString: String {
         let totalMinutes = allFilms.reduce(0) { $0 + $1.durationMinutes }
         let hours = totalMinutes / 60
@@ -14,19 +23,40 @@ struct StatisticsView: View {
         return "\(hours)h \(minutes)m"
     }
     
-    // Calcolo Genere Preferito
     var favoriteGenreString: String {
         if allFilms.isEmpty { return "None" }
-        
-        // Crea un dizionario [Genere: Numero di film]
         let genreCounts = Dictionary(grouping: allFilms, by: { $0.genre })
             .mapValues { $0.count }
-        
-        // Trova il genere con il valore più alto
         if let maxGenre = genreCounts.max(by: { $0.value < $1.value }) {
             return "\(maxGenre.key) (\(maxGenre.value) films)"
         }
         return "None"
+    }
+    
+    // --- FUNZIONE CLASSIFICA DENSA (1, 1, 2, 3...) ---
+    func calculateRankings() -> [(rank: Int, film: Film)] {
+        var result: [(Int, Film)] = []
+        var currentRank = 1
+        
+        for (index, film) in allFilms.enumerated() {
+            if index == 0 {
+                // Il primo è sempre 1°
+                result.append((1, film))
+            } else {
+                let previousFilm = allFilms[index - 1]
+                
+                // Se il voto è uguale, stesso rango
+                if film.rating == previousFilm.rating {
+                    // Manteniamo currentRank invariato
+                    result.append((currentRank, film))
+                } else {
+                    // Se il voto è diverso, incrementiamo di 1 (es. da 1 a 2)
+                    currentRank += 1
+                    result.append((currentRank, film))
+                }
+            }
+        }
+        return result
     }
     
     var body: some View {
@@ -34,41 +64,99 @@ struct StatisticsView: View {
             ScrollView {
                 VStack(spacing: 20) {
                     
-                    // --- CARD 1: Tempo Totale ---
-                    VStack(spacing: 10) {
-                        Image(systemName: "clock.fill")
-                            .font(.system(size: 40))
-                            .foregroundColor(.blue)
-                        Text("Total Watch Time")
-                            .font(.headline)
-                            .foregroundColor(.secondary)
-                        Text(totalDurationString)
-                            .font(.custom("HoltwoodOneSC-Regular", size: 24))
-                            .foregroundColor(.primary)
+                    // --- SEZIONE 1: Riepilogo ---
+                    HStack(spacing: 15) {
+                        // Card Tempo
+                        VStack(spacing: 10) {
+                            Image(systemName: "clock.fill")
+                                .font(.title)
+                                .foregroundColor(.blue)
+                            Text("Watch Time")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            Text(totalDurationString)
+                                .font(.headline)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 15))
+                        .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+                        
+                        // Card Genere
+                        VStack(spacing: 10) {
+                            Image(systemName: "film.fill")
+                                .font(.title)
+                                .foregroundColor(.purple)
+                            Text("Fav Genre")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            Text(favoriteGenreString.components(separatedBy: " (").first ?? "None")
+                                .font(.headline)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 15))
+                        .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
                     }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 15))
-                    .shadow(radius: 5)
                     
-                    // --- CARD 2: Genere Preferito ---
-                    VStack(spacing: 10) {
-                        Image(systemName: "film.fill")
-                            .font(.system(size: 40))
-                            .foregroundColor(.purple)
-                        Text("Favorite Genre")
-                            .font(.headline)
-                            .foregroundColor(.secondary)
-                        Text(favoriteGenreString)
-                            .font(.custom("HoltwoodOneSC-Regular", size: 24))
-                            .foregroundColor(.primary)
+                    Divider().padding(.vertical, 5)
+                    
+                    // --- SEZIONE 2: Classifica (Ranking) ---
+                    VStack(alignment: .leading, spacing: 15) {
+                        Text("Ranking")
+                            .font(.title2)
+                            .bold()
+                            .padding(.horizontal, 5)
+                        
+                        ForEach(calculateRankings(), id: \.film.id) { (rank, film) in
+                            HStack(spacing: 15) {
+                                // 1. Posizione in classifica
+                                ZStack {
+                                    Circle()
+                                        .fill(rankColor(rank: rank))
+                                        .frame(width: 30, height: 30)
+                                    Text("\(rank)")
+                                        .font(.caption)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(.white)
+                                }
+                                
+                                // 2. Titolo del film
+                                Text(film.title)
+                                    .font(.headline)
+                                    .lineLimit(1)
+                                
+                                Spacer()
+                                
+                                // 3. Voto
+                                HStack(spacing: 4) {
+                                    Text(String(format: "%.1f", film.rating))
+                                        .fontWeight(.semibold)
+                                    Image(systemName: "star.fill")
+                                        .font(.caption)
+                                        .foregroundColor(.yellow)
+                                }
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 5)
+                                .background(Color.black.opacity(0.05))
+                                .clipShape(Capsule())
+                            }
+                            .padding()
+                            .background(Color.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            // Trofeo per TUTTI i primi classificati
+                            .overlay(alignment: .topTrailing) {
+                                if rank == 1 {
+                                    Image(systemName: "trophy.fill")
+                                        .foregroundColor(.yellow)
+                                        .padding(8)
+                                        .shadow(radius: 1)
+                                }
+                            }
+                        }
                     }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 15))
-                    .shadow(radius: 5)
                     
                     Spacer()
                 }
@@ -77,6 +165,16 @@ struct StatisticsView: View {
             .navigationTitle("Statistics")
             .navigationBarTitleDisplayMode(.inline)
             .background(Color(red: 0.95, green: 0.85, blue: 0.75))
+        }
+    }
+    
+    // Funzione colori
+    private func rankColor(rank: Int) -> Color {
+        switch rank {
+        case 1: return .yellow // Oro
+        case 2: return .gray   // Argento
+        case 3: return .orange // Bronzo
+        default: return .blue.opacity(0.7) // Gli altri
         }
     }
 }
