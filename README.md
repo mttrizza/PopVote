@@ -87,3 +87,35 @@ Un gran añadido ha sido la pantalla **“WishList”**, donde podemos añadir l
 Después, el segundo añadido importante ha sido la página **“Stats”**, donde se nos dará la información del **total de horas** de películas visionadas, el **género preferido**, es decir, el género de película más visto y por ultimo una **clasifica de los film preferitos**.  
 Por último, pero sin duda el *más importante*, está la página **“add”**, donde tenemos todo lo que necesitamos (después de ver una película) para poder cargarla en nuestra aplicación: se puede **añadir** una *imagen*, **poner el título**, el **género**, la **duración**, una **descripción**, una **puntuación** y finalmente podemos, pero *no obligatoriamente*, **ponerla dentro de una carpeta** ya creada previamente, luego pulsar **“Save Film”** y ocurre la magia. 
 
+Para el modelo de datos usamos SwiftData. Un detalle arquitectónico importante es el uso de **@Attribute(.externalStorage)** para las imágenes de los pósteres. Esto le indica a la base de datos que guarde los datos binarios pesados como archivos externos en el disco, manteniendo liviano el archivo SQLite de la base de datos y haciendo que las consultas sean muy rápidas.
+```Swift
+@Model
+final class Film {
+    var title: String
+    var rating: Double
+    var genre: String
+    
+    var folder: Folder? 
+    
+    @Attribute(.externalStorage)
+    var posterData: Data?
+   }
+
+```
+
+Hemos creado un flujo de usuario fluido para mover una película de la Wishlist a la biblioteca principal. Utilizo un closure onSaveSuccess pasado a la vista de añadido: solo cuando la nueva película está confirmada y guardada en la base de datos, la aplicación procede automáticamente a eliminar el elemento de la Wishlist, garantizando la coherencia de los datos
+```Swift
+.sheet(isPresented: $isShowingAddSheet) {
+    AddFilmView(
+        prefilledTitle: item.title,
+        prefilledPosterData: item.posterData,
+        onSaveSuccess: {            
+
+            modelContext.delete(item)
+            
+            dismiss()
+        }
+    )
+}
+```
+
