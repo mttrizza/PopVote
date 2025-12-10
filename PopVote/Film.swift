@@ -9,7 +9,6 @@ final class Film {
     var dateAdded: Date
     var durationMinutes: Int
     
-    // <<< NUOVO: Il genere del film >>>
     var genre: String
     
     @Attribute(.externalStorage)
@@ -22,7 +21,7 @@ final class Film {
         self.comment = comment
         self.rating = rating
         self.durationMinutes = durationMinutes
-        self.genre = genre // <<< Salviamo il genere
+        self.genre = genre 
         self.posterData = posterData
         self.dateAdded = Date()
     }

@@ -1,10 +1,8 @@
 import SwiftUI
 import SwiftData
 
-// <<< NUOVO: Un Enum per definire le opzioni di filtro >>>
+
 enum SortOption: String, CaseIterable, Identifiable {
-    // CaseIterable ci permette di elencarli tutti in un Picker
-    // Identifiable serve al Picker per sapere qual è quale
     
     case ratingHighLow = "Ranking (high rating)"
     case ratingLowHigh = "Ranking (low rating)"
@@ -18,34 +16,26 @@ enum SortOption: String, CaseIterable, Identifiable {
 
 
 struct AllFilmsView: View {
-    
-    // <<< NUOVO: Stato per la barra di ricerca >>>
+
     @State private var searchText = ""
+
+    @State private var currentSort: SortOption = .dateNewest
     
-    // <<< NUOVO: Stato per il filtro selezionato >>>
-    @State private var currentSort: SortOption = .dateNewest // Filtro di default
-    
-    // <<< MODIFICA: La @Query ora carica TUTTI i film, senza ordinarli >>>
-    // L'ordinamento e il filtro li faremo noi.
     @Query private var allFilms: [Film]
     
-    
-    // <<< NUOVO: "Computed Property" per la lista filtrata e ordinata >>>
-    // Questa variabile si ricalcola automaticamente quando
-    // 'searchText' o 'currentSort' cambiano.
     var filteredAndSortedFilms: [Film] {
-        // 1. Filtra per la ricerca (Search)
+        // Search
         let filteredFilms: [Film]
         if searchText.isEmpty {
-            filteredFilms = allFilms // Se la ricerca è vuota, prendili tutti
+            filteredFilms = allFilms
         } else {
-            // Altrimenti, filtra quelli che contengono il testo di ricerca
+
             filteredFilms = allFilms.filter { film in
                 film.title.localizedCaseInsensitiveContains(searchText)
             }
         }
         
-        // 2. Ordina (Sort) i film che sono stati filtrati
+        // Sort
         switch currentSort {
         case .ratingHighLow:
             return filteredFilms.sorted { $0.rating > $1.rating }
@@ -66,11 +56,9 @@ struct AllFilmsView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                // <<< MODIFICA: Usiamo la nostra nuova variabile >>>
                 List(filteredAndSortedFilms) { film in
                     NavigationLink(value: film) {
                         
-                        // (Questa riga è la stessa di prima)
                         HStack(spacing: 15) {
                             if let data = film.posterData, let uiImage = UIImage(data: data) {
                                 Image(uiImage: uiImage)
@@ -102,8 +90,7 @@ struct AllFilmsView: View {
                     .listRowBackground(Color.clear)
                 }
                 .scrollContentBackground(.hidden)
-                
-                // <<< NUOVO: Messaggio se la lista filtrata è vuota >>>
+
                 .overlay {
                     if filteredAndSortedFilms.isEmpty {
                         VStack {
@@ -117,23 +104,20 @@ struct AllFilmsView: View {
                     }
                 }
             }
-            // <<< NUOVO: Barra di ricerca >>>
-            // Si aggancia alla NavigationStack e appare sotto al titolo
             .searchable(text: $searchText, prompt: "Search by title...")
             
-            // <<< NUOVO: Pulsante Filtro >>>
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    // Menu fa apparire il pop-up con le opzioni
+ 
                     Menu {
-                        // Picker per selezionare l'opzione di filtro
+   
                         Picker("Sort by", selection: $currentSort) {
                             ForEach(SortOption.allCases) { option in
                                 Text(option.rawValue).tag(option)
                             }
                         }
                     } label: {
-                        // Questa è l'icona del pulsante
+
                         Image(systemName: "line.3.horizontal.decrease.circle")
                     }
                 }

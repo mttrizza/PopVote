@@ -15,7 +15,7 @@ struct AddWishlistView: View {
         NavigationStack {
             VStack(spacing: 20) {
                 
-                // --- Image Picker ---
+                // Image Picker
                 PhotosPicker(selection: $selectedPosterItem, matching: .images, photoLibrary: .shared()) {
                     VStack {
                         if let data = selectedPosterData, let uiImage = UIImage(data: data) {
@@ -24,7 +24,7 @@ struct AddWishlistView: View {
                                 .frame(width: 150, height: 200)
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                         } else {
-                            Image(systemName: "popcorn.fill") // Icona diversa per la wishlist
+                            Image(systemName: "popcorn.fill")
                                 .font(.system(size: 80)).foregroundColor(.gray)
                                 .frame(width: 150, height: 200)
                                 .background(Color.gray.opacity(0.1))
@@ -41,14 +41,13 @@ struct AddWishlistView: View {
                     }
                 }
                 
-                // --- Campo Titolo ---
+                
                 TextField("Movie Title needed", text: $title)
                     .textFieldStyle(.roundedBorder)
                     .padding(.horizontal)
                 
                 Spacer()
                 
-                // --- Pulsante Salva ---
                 Button("Save to WishList") {
                     let newItem = WishlistItem(title: title, posterData: selectedPosterData)
                     modelContext.insert(newItem)

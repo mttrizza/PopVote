@@ -22,19 +22,17 @@ struct AddFilmView: View {
     @State private var selectedPosterData: Data?
     @State private var selectedFolderID: PersistentIdentifier?
     
-    // <<< NUOVO: Callback per avvisare che il salvataggio è riuscito >>>
+
     var onSaveSuccess: (() -> Void)? = nil
 
-    // <<< NUOVO: Init personalizzato per accettare dati pre-compilati >>>
     init(prefilledTitle: String? = nil, prefilledPosterData: Data? = nil, onSaveSuccess: (() -> Void)? = nil) {
-        // Se abbiamo un titolo precompilato, lo usiamo, altrimenti vuoto
+
         if let title = prefilledTitle {
             _filmTitle = State(initialValue: title)
         } else {
             _filmTitle = State(initialValue: "")
         }
         
-        // Se abbiamo un poster precompilato, lo usiamo
         if let data = prefilledPosterData {
             _selectedPosterData = State(initialValue: data)
         }
@@ -74,12 +72,12 @@ struct AddFilmView: View {
                             }
                         }
                         
-                        // Titolo
+                        // Title
                         TextField("Film Title", text: $filmTitle)
                             .textFieldStyle(.roundedBorder)
                             .padding(.horizontal)
                         
-                        // Genere
+                        // Genre
                         HStack {
                             Text("Genre").font(.headline)
                             Spacer()
@@ -93,7 +91,7 @@ struct AddFilmView: View {
                         }
                         .padding().background(Color.white).clipShape(RoundedRectangle(cornerRadius: 10)).padding(.horizontal)
                         
-                        // Durata
+                        // Duration
                         HStack {
                             Text("Duration:").font(.headline)
                             Picker("Hours", selection: $selectedHours) { ForEach(0...10, id: \.self) { h in Text("\(h) h").tag(h) } }.pickerStyle(.wheel).frame(height: 100)
@@ -101,7 +99,7 @@ struct AddFilmView: View {
                         }
                         .padding(.horizontal).background(Color.gray.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 10)).padding(.horizontal)
                         
-                        // Commento
+                        // Comment
                         TextEditor(text: $filmComment)
                             .frame(height: 100)
                             .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray.opacity(0.3), lineWidth: 1))
@@ -114,7 +112,7 @@ struct AddFilmView: View {
                         }
                         .padding().background(Color.gray.opacity(0.1)).clipShape(RoundedRectangle(cornerRadius: 10)).padding(.horizontal)
                         
-                        // Cartella
+                        // Folder
                         if !folders.isEmpty {
                             NavigationLink(destination: CustomFolderSelectionView(folders: folders, selectedID: $selectedFolderID)) {
                                 HStack {
@@ -168,13 +166,11 @@ struct AddFilmView: View {
             targetFolder.films?.append(newFilm)
         }
         
-        // <<< Chiama la funzione di successo (se esiste) >>>
+        // Call function if exist
         onSaveSuccess?()
         
-        // Chiude la vista (che sia un tab o uno sheet)
         dismiss()
         
-        // Reset (utile se è un Tab che non viene distrutto)
         filmTitle = ""
         filmComment = ""
         filmRating = 2.5

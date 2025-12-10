@@ -15,7 +15,6 @@ struct EditFilmView: View {
     @State private var selectedHours: Int
     @State private var selectedMinutes: Int
     
-    // <<< NUOVO: Genere >>>
     let genres = ["Action", "Adventure", "Animation", "Comedy", "Crime", "Documentary", "Drama", "Family", "Fantasy", "Horror", "Musical", "Mystery", "Romance", "Sci-Fi", "Thriller", "War", "Western"]
     @State private var selectedGenre: String
     
@@ -33,7 +32,6 @@ struct EditFilmView: View {
         _selectedHours = State(initialValue: film.durationMinutes / 60)
         _selectedMinutes = State(initialValue: film.durationMinutes % 60)
         
-        // <<< Inizializziamo il genere >>>
         _selectedGenre = State(initialValue: film.genre)
     }
 
@@ -63,7 +61,6 @@ struct EditFilmView: View {
                         
                         TextField("Film Title", text: $filmTitle).textFieldStyle(.roundedBorder).padding(.horizontal)
                         
-                        // <<< NUOVO: Menu Modifica Genere >>>
                         HStack {
                             Text("Genre").font(.headline)
                             Spacer()
@@ -80,7 +77,7 @@ struct EditFilmView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                         .padding(.horizontal)
                         
-                        // Durata
+                        // Duration
                         HStack {
                             Text("Duration:").font(.headline)
                             Picker("Hours", selection: $selectedHours) { ForEach(0...10, id: \.self) { h in Text("\(h) h").tag(h) } }.pickerStyle(.wheel).frame(height: 100)
@@ -133,7 +130,7 @@ struct EditFilmView: View {
         film.comment = filmComment
         film.rating = filmRating
         film.durationMinutes = (selectedHours * 60) + selectedMinutes
-        film.genre = selectedGenre // <<< Aggiorna genere
+        film.genre = selectedGenre 
         film.posterData = selectedPosterData
         
         if let selectedID = selectedFolderID, let targetFolder = folders.first(where: { $0.id == selectedID }) {

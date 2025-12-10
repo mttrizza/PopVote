@@ -1,20 +1,10 @@
-
-//
-//  StatisticsView.swift
-//  PopVote
-//
-//  Created by Mattia Rizza on [Data Odierna].
-//
-
 import SwiftUI
 import SwiftData
 
 struct StatisticsView: View {
     
-    // Ordiniamo i film per voto decrescente (dal più alto al più basso)
     @Query(sort: \Film.rating, order: .reverse) private var allFilms: [Film]
     
-    // --- CALCOLI STATISTICHE ---
     var totalDurationString: String {
         let totalMinutes = allFilms.reduce(0) { $0 + $1.durationMinutes }
         let hours = totalMinutes / 60
@@ -33,24 +23,19 @@ struct StatisticsView: View {
         return "None"
     }
     
-    // --- FUNZIONE CLASSIFICA DENSA (1, 1, 2, 3...) ---
     func calculateRankings() -> [(rank: Int, film: Film)] {
         var result: [(Int, Film)] = []
         var currentRank = 1
         
         for (index, film) in allFilms.enumerated() {
             if index == 0 {
-                // Il primo è sempre 1°
                 result.append((1, film))
             } else {
                 let previousFilm = allFilms[index - 1]
                 
-                // Se il voto è uguale, stesso rango
                 if film.rating == previousFilm.rating {
-                    // Manteniamo currentRank invariato
                     result.append((currentRank, film))
                 } else {
-                    // Se il voto è diverso, incrementiamo di 1 (es. da 1 a 2)
                     currentRank += 1
                     result.append((currentRank, film))
                 }
@@ -64,9 +49,8 @@ struct StatisticsView: View {
             ScrollView {
                 VStack(spacing: 20) {
                     
-                    // --- SEZIONE 1: Riepilogo ---
                     HStack(spacing: 15) {
-                        // Card Tempo
+                        // Card Time
                         VStack(spacing: 10) {
                             Image(systemName: "clock.fill")
                                 .font(.title)
@@ -83,7 +67,7 @@ struct StatisticsView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 15))
                         .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
                         
-                        // Card Genere
+                        // Card Genre
                         VStack(spacing: 10) {
                             Image(systemName: "film.fill")
                                 .font(.title)
@@ -103,7 +87,7 @@ struct StatisticsView: View {
                     
                     Divider().padding(.vertical, 5)
                     
-                    // --- SEZIONE 2: Classifica (Ranking) ---
+                    // Ranking
                     VStack(alignment: .leading, spacing: 15) {
                         Text("Ranking")
                             .font(.title2)
@@ -112,7 +96,7 @@ struct StatisticsView: View {
                         
                         ForEach(calculateRankings(), id: \.film.id) { (rank, film) in
                             HStack(spacing: 15) {
-                                // 1. Posizione in classifica
+                            
                                 ZStack {
                                     Circle()
                                         .fill(rankColor(rank: rank))
@@ -123,14 +107,13 @@ struct StatisticsView: View {
                                         .foregroundColor(.white)
                                 }
                                 
-                                // 2. Titolo del film
                                 Text(film.title)
                                     .font(.headline)
                                     .lineLimit(1)
                                 
                                 Spacer()
                                 
-                                // 3. Voto
+                                // Vote
                                 HStack(spacing: 4) {
                                     Text(String(format: "%.1f", film.rating))
                                         .fontWeight(.semibold)
@@ -146,7 +129,6 @@ struct StatisticsView: View {
                             .padding()
                             .background(Color.white)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
-                            // Trofeo per TUTTI i primi classificati
                             .overlay(alignment: .topTrailing) {
                                 if rank == 1 {
                                     Image(systemName: "trophy.fill")
@@ -168,13 +150,12 @@ struct StatisticsView: View {
         }
     }
     
-    // Funzione colori
     private func rankColor(rank: Int) -> Color {
         switch rank {
-        case 1: return .yellow // Oro
-        case 2: return .gray   // Argento
-        case 3: return .orange // Bronzo
-        default: return .blue.opacity(0.7) // Gli altri
+        case 1: return .yellow
+        case 2: return .gray
+        case 3: return .orange
+        default: return .blue.opacity(0.7) 
         }
     }
 }

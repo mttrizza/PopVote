@@ -6,10 +6,9 @@ struct FilmDetailView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     
-    // Il film passato dalla vista precedente
     let film: Film
     
-    // Stati per i fogli e gli alert
+    // Alert
     @State private var isShowingEditSheet = false
     @State private var isShowingDeleteAlert = false
     
@@ -18,7 +17,6 @@ struct FilmDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 
-                // --- POSTER ---
                 HStack {
                     Spacer()
                     if let data = film.posterData, let uiImage = UIImage(data: data) {
@@ -37,23 +35,20 @@ struct FilmDetailView: View {
                 }
                 .padding(.top, 20)
                 
-                // --- TITOLO, VOTO e DURATA ---
                 VStack(alignment: .leading, spacing: 8) {
-                    // Titolo
+                    
                     Text(film.title)
                         .font(.custom("HoltwoodOneSC-Regular", size: 32))
                         .lineLimit(2)
                     
-                    // Voto
                     HStack {
                         Image(systemName: "star.fill").foregroundColor(.white)
                         Text("\(film.rating, specifier: "%.1f") / 5.0")
                             .font(.title2).fontWeight(.semibold)
                     }
                     
-                    // <<< NUOVO: Visualizzazione Durata >>>
                     HStack {
-                        Image(systemName: "clock") // Icona orologio
+                        Image(systemName: "clock")
                         
                         let hours = film.durationMinutes / 60
                         let minutes = film.durationMinutes % 60
@@ -61,7 +56,7 @@ struct FilmDetailView: View {
                         if film.durationMinutes > 0 {
                             Text("\(hours)h \(minutes)m")
                         } else {
-                            Text("-- h -- m") // Se la durata è 0
+                            Text("-- h -- m")
                         }
                     }
                     .font(.subheadline)
@@ -69,20 +64,18 @@ struct FilmDetailView: View {
                 }
                 .padding(.horizontal)
                 
-                // --- COMMENTO ---
                 if !film.comment.isEmpty {
                     VStack(alignment: .leading, spacing: 5) {
                         Text("Comment").font(.headline)
                         Text(film.comment).font(.body)
                     }
                     .padding()
-                    .frame(maxWidth: .infinity, alignment: .leading) // Allinea a sinistra
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .background(Color.black.opacity(0.05))
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     .padding(.horizontal)
                 }
                 
-                // --- Data e Pulsante Delete ---
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Added on: \(film.dateAdded.formatted(date: .long, time: .shortened))")
                         .font(.caption)
@@ -99,17 +92,16 @@ struct FilmDetailView: View {
                     .tint(.red)
                 }
                 .padding(.horizontal)
-                .padding(.bottom, 20) // Spazio finale
+                .padding(.bottom, 20)
                 
             }
         }
-        // Colore di sfondo
+
         .background(Color(red: 0.95, green: 0.85, blue: 0.75))
         .scrollContentBackground(.hidden)
         .navigationTitle(film.title)
         .navigationBarTitleDisplayMode(.inline)
         
-        // Pulsante Modifica
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Edit") {
@@ -117,12 +109,10 @@ struct FilmDetailView: View {
                 }
             }
         }
-        // Sheet Modifica
         .sheet(isPresented: $isShowingEditSheet) {
             EditFilmView(film: film)
         }
         
-        // Alert Eliminazione
         .alert("Delete \"\(film.title)\"?", isPresented: $isShowingDeleteAlert) {
             Button("Delete", role: .destructive) {
                 deleteFilm()

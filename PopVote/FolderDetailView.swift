@@ -6,7 +6,6 @@ struct FolderDetailsView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     
-    // Stato per mostrare il foglio di modifica
     @State private var isShowingEditSheet = false
     
     let folder: Folder
@@ -15,11 +14,9 @@ struct FolderDetailsView: View {
         VStack {
             
             if let films = folder.films, !films.isEmpty {
-                // Elenco dei film
                 List(films) { film in
                     NavigationLink(value: film) {
                         HStack(spacing: 15) {
-                            // Immagine Quadrata (come da tua richiesta precedente)
                             if let data = film.posterData, let uiImage = UIImage(data: data) {
                                 Image(uiImage: uiImage)
                                     .resizable().scaledToFill()
@@ -48,7 +45,6 @@ struct FolderDetailsView: View {
                 .scrollContentBackground(.hidden)
                 
             } else {
-                // Messaggio cartella vuota
                 Spacer()
                 Text("This folder is empty.")
                 Text("Add a movie from the 'Add' screen.")
@@ -66,7 +62,6 @@ struct FolderDetailsView: View {
             FilmDetailView(film: film)
         }
         
-        // --- MODIFICA QUI: Tasto Edit invece di Delete ---
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Edit") {
@@ -74,7 +69,6 @@ struct FolderDetailsView: View {
                 }
             }
         }
-        // Sheet per la modifica
         .sheet(isPresented: $isShowingEditSheet) {
             EditFolderView(folder: folder)
                 .presentationDetents([.medium])

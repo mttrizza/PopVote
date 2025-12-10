@@ -4,17 +4,15 @@ import PhotosUI
 
 struct EditWishlistView: View {
     
-    // Riceviamo l'oggetto da modificare
+
     @Bindable var item: WishlistItem
     
     @Environment(\.dismiss) private var dismiss
-    
-    // Stati temporanei per le modifiche
+
     @State private var title: String
     @State private var selectedPosterItem: PhotosPickerItem?
     @State private var selectedPosterData: Data?
     
-    // Inizializzatore per caricare i dati esistenti
     init(item: WishlistItem) {
         self.item = item
         _title = State(initialValue: item.title)
@@ -24,7 +22,6 @@ struct EditWishlistView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                // --- Image Picker ---
                 PhotosPicker(selection: $selectedPosterItem, matching: .images, photoLibrary: .shared()) {
                     VStack {
                         if let data = selectedPosterData, let uiImage = UIImage(data: data) {
@@ -51,7 +48,6 @@ struct EditWishlistView: View {
                     }
                 }
                 
-                // --- Campo Titolo ---
                 TextField("Movie Title", text: $title)
                     .textFieldStyle(.roundedBorder)
                     .padding()
@@ -67,7 +63,6 @@ struct EditWishlistView: View {
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Save") {
-                        // Salviamo le modifiche
                         item.title = title
                         item.posterData = selectedPosterData
                         dismiss()

@@ -2,22 +2,19 @@ import SwiftUI
 import SwiftData
 
 struct CustomFolderSelectionView: View {
-    // La lista di tutte le cartelle disponibili
+
     var folders: [Folder]
     
-    // Il Binding all'ID della cartella selezionata in AddFilmView
+
     @Binding var selectedID: PersistentIdentifier?
     
-    // Per chiudere questa vista
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
-        // Usiamo una List per l'elenco
         List {
-            // Opzione "No Folder"
             Button(action: {
                 selectedID = nil
-                dismiss() // Torna indietro
+                dismiss()
             }) {
                 HStack {
                     Text("No Folder")
@@ -28,13 +25,12 @@ struct CustomFolderSelectionView: View {
                     }
                 }
             }
-            .foregroundColor(.primary) // Rende il testo del bottone nero
+            .foregroundColor(.primary)
             
-            // Elenco di tutte le cartelle
             ForEach(folders) { folder in
                 Button(action: {
                     selectedID = folder.id
-                    dismiss() // Torna indietro
+                    dismiss()
                 }) {
                     HStack {
                         Text(folder.name)
@@ -51,10 +47,8 @@ struct CustomFolderSelectionView: View {
         .navigationTitle("Select Folder")
         .navigationBarTitleDisplayMode(.inline)
         
-        // <<< LA SOLUZIONE CHIAVE >>>
-        // Rende lo sfondo della List trasparente
         .scrollContentBackground(.hidden)
-        // Applica il tuo colore di sfondo all'intera vista
+
         .background(Color(red: 0.95, green: 0.85, blue: 0.75))
     }
 }

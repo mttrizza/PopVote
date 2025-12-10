@@ -7,18 +7,15 @@ struct LibraryView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Folder.dateAdded) private var folders: [Folder]
     
-    // Stati per aggiungere nuova cartella
     @State private var showingAddFolderSheet = false
     @State private var newFolderName = ""
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var selectedPhotoData: Data?
 
-    // --- NUOVO: Stati per la MODALITÀ SELEZIONE ---
-    @State private var isSelectionMode = false // Siamo in modalità modifica?
-    @State private var selectedFolders = Set<PersistentIdentifier>() // ID delle cartelle selezionate
-    @State private var showDeleteConfirmation = false // Alert conferma
+    @State private var isSelectionMode = false
+    @State private var selectedFolders = Set<PersistentIdentifier>()
+    @State private var showDeleteConfirmation = false
 
-    // Layout Griglia
     private var gridColumns: [GridItem] = [
         GridItem(.adaptive(minimum: 120))
     ]
@@ -31,9 +28,7 @@ struct LibraryView: View {
                     LazyVGrid(columns: gridColumns, spacing: 20) {
                         
                         ForEach(folders) { folder in
-                            // Usiamo un ZStack per gestire sia il click normale che la selezione
                             ZStack {
-                                // 1. Aspetto Visivo della Cartella
                                 VStack {
                                     if let data = folder.iconData, let uiImage = UIImage(data: data) {
                                         Image(uiImage: uiImage)
@@ -41,7 +36,6 @@ struct LibraryView: View {
                                             .scaledToFill()
                                             .frame(width: 100, height: 100)
                                             .clipShape(RoundedRectangle(cornerRadius: 10))
-                                            // Effetto visivo se selezionato
                                             .opacity(isSelectionMode && selectedFolders.contains(folder.id) ? 0.6 : 1.0)
                                     } else {
                                         Image(systemName: "folder.fill")
@@ -61,7 +55,6 @@ struct LibraryView: View {
                                 }
                                 .frame(width: 120)
                                 
-                                // 2. Indicatore di Selezione (Spunta Blu)
                                 if isSelectionMode {
                                     VStack {
                                         HStack {
@@ -73,17 +66,14 @@ struct LibraryView: View {
                                         }
                                         Spacer()
                                     }
-                                    .frame(width: 100, height: 100) // Stessa dim dell'icona
+                                    .frame(width: 100, height: 100)
                                 }
                                 
-                                // 3. Gestione del Tocco
-                                // Se NON siamo in selezione -> NavigationLink invisibile sopra tutto
                                 if !isSelectionMode {
                                     NavigationLink(value: folder) {
-                                        Color.clear // Invisibile, ma cliccabile
+                                        Color.clear
                                     }
                                 } else {
-                                    // Se SIAMO in selezione -> Bottone per selezionare
                                     Button(action: {
                                         toggleSelection(for: folder)
                                     }) {
@@ -105,22 +95,20 @@ struct LibraryView: View {
                 .background(Color(red: 0.95, green: 0.85, blue: 0.75))
                 .edgesIgnoringSafeArea(.all)
             }
-            // --- TOOLBAR AGGIORNATA ---
+
             .toolbar {
-                // SINISTRA: Tasto "Edit" / "Done"
                 ToolbarItem(placement: .topBarLeading) {
                     Button(isSelectionMode ? "Done" : "Select") {
                         withAnimation {
                             isSelectionMode.toggle()
-                            selectedFolders.removeAll() // Pulisce selezione quando si esce/entra
+                            selectedFolders.removeAll()
                         }
                     }
                 }
                 
-                // DESTRA: Mostra Cestino (se in selezione) OPPURE Aggiungi (se normale)
+ 
                 ToolbarItem(placement: .topBarTrailing) {
                     if isSelectionMode {
-                        // Tasto Cestino
                         Button(action: {
                             if !selectedFolders.isEmpty {
                                 showDeleteConfirmation = true
@@ -131,7 +119,6 @@ struct LibraryView: View {
                         }
                         .disabled(selectedFolders.isEmpty)
                     } else {
-                        // Tasto Aggiungi Cartella
                         Button(action: {
                             showingAddFolderSheet = true
                         }) {
@@ -142,7 +129,6 @@ struct LibraryView: View {
                 }
             }
             
-            // ALERT Conferma Eliminazione
             .alert("Delete selected folders?", isPresented: $showDeleteConfirmation) {
                 Button("Delete", role: .destructive) {
                     deleteSelected()
@@ -152,7 +138,6 @@ struct LibraryView: View {
                 Text("Movies inside these folders will not be deleted.")
             }
             
-            // SHEET Aggiungi Cartella
             .sheet(isPresented: $showingAddFolderSheet) {
                 VStack(spacing: 20) {
                     Text("New Folder").font(.headline).padding(.top, 20)
@@ -188,7 +173,6 @@ struct LibraryView: View {
         }
     }
     
-    // LOGICA DI SELEZIONE
     private func toggleSelection(for folder: Folder) {
         if selectedFolders.contains(folder.id) {
             selectedFolders.remove(folder.id)
@@ -197,17 +181,15 @@ struct LibraryView: View {
         }
     }
     
-    // LOGICA DI CANCELLAZIONE
     private func deleteSelected() {
         withAnimation {
-            // Cerchiamo le cartelle reali che corrispondono agli ID selezionati
             for folder in folders {
                 if selectedFolders.contains(folder.id) {
                     modelContext.delete(folder)
                 }
             }
             selectedFolders.removeAll()
-            isSelectionMode = false // Esce dalla modalità edit
+            isSelectionMode = false 
         }
     }
 }

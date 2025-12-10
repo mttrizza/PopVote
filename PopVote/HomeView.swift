@@ -18,35 +18,30 @@ struct HomeView: View {
                 .padding(.bottom, 5)
                 
                 TabView {
-                    // 1. LIBRARY
                     LibraryView()
                         .tabItem {
                             Image(systemName: "books.vertical.fill")
                             Text("Library")
                         }
                     
-                    // 2. ALL FILMS (Tornato Normale)
                     AllFilmsView()
                         .tabItem {
                             Image(systemName: "film.stack")
                             Text("All Films")
                         }
                     
-                    // 3. WISHLIST
                     WishlistView()
                         .tabItem {
                             Image(systemName: "list.star")
                             Text("WishList")
                         }
                     
-                    // 4. STATISTICS (Nuovo)
                     StatisticsView()
                         .tabItem {
                             Image(systemName: "chart.bar.fill")
                             Text("Stats")
                         }
                     
-                    // 5. ADD
                     AddFilmView()
                         .tabItem {
                             Image(systemName: "plus.circle.fill")

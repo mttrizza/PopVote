@@ -7,7 +7,6 @@ struct PopVoteApp: App {
         WindowGroup {
             HomeView()
         }
-        // Assicurati che ci siano TUTTI E TRE i modelli qui dentro:
         .modelContainer(for: [Folder.self, Film.self, WishlistItem.self])
     }
 }

@@ -14,7 +14,6 @@ struct WishlistDetailView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                // --- Immagine Grande ---
                 if let data = item.posterData, let uiImage = UIImage(data: data) {
                     Image(uiImage: uiImage)
                         .resizable()
@@ -34,7 +33,6 @@ struct WishlistDetailView: View {
                         .padding()
                 }
                 
-                // --- Titolo ---
                 Text(item.title)
                     .font(.custom("HoltwoodOneSC-Regular", size: 32))
                     .multilineTextAlignment(.center)
@@ -47,24 +45,23 @@ struct WishlistDetailView: View {
         .navigationTitle("Details")
         .navigationBarTitleDisplayMode(.inline)
         
-        // --- TOOLBAR CON PULSANTI PIÙ PICCOLI ---
         .toolbar {
             
-            // PULSANTE 1: EDIT (Matita)
+            //edit
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: {
                     isShowingEditSheet = true
                 }) {
                     Image(systemName: "pencil")
-                        .font(.system(size: 14, weight: .bold)) // Icona più piccola
+                        .font(.system(size: 14, weight: .bold))
                         .foregroundColor(.black)
-                        .frame(width: 32, height: 32) // <<< CERCHIO RIDOTTO a 32 >>>
+                        .frame(width: 32, height: 32)
                         .background(Circle().fill(.white))
                         .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
                 }
             }
             
-            // PULSANTE 2: TIK (Spunta)
+            // Tik
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: {
                     isShowingAddSheet = true

@@ -21,7 +21,7 @@ struct EditFolderView: View {
         NavigationStack {
             VStack(spacing: 20) {
                 
-                // --- Image Picker ---
+
                 PhotosPicker(selection: $selectedPosterItem, matching: .images, photoLibrary: .shared()) {
                     VStack {
                         if let data = selectedPosterData, let uiImage = UIImage(data: data) {
@@ -49,7 +49,6 @@ struct EditFolderView: View {
                     }
                 }
                 
-                // --- Nome Cartella ---
                 TextField("Folder Name", text: $folderName)
                     .textFieldStyle(.roundedBorder)
                     .padding(.horizontal)
