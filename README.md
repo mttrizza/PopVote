@@ -1,4 +1,4 @@
-### Buenos días profesora, somos Mattia Rizza, Alessandro Scarpino y Martha …, y este es el proyecto final de PAMN.
+### Buenos días profesora, somos Mattia Rizza, Alessandro Scarpino y Martha Troschel, y este es el proyecto final de PAMN.
 ---
 
 ## Introducción
