@@ -67,21 +67,20 @@ struct WishlistDetailView: View {
                     isShowingAddSheet = true
                 }) {
                     Image(systemName: "checkmark")
-                        .font(.system(size: 14, weight: .bold)) // Icona più piccola
+                        .font(.system(size: 14, weight: .bold))
                         .foregroundColor(.green)
-                        .frame(width: 32, height: 32) // <<< CERCHIO RIDOTTO a 32 >>>
+                        .frame(width: 32, height: 32)
                         .background(Circle().fill(.white))
                         .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
                 }
             }
         }
         
-        // Sheet per Modifica
+    
         .sheet(isPresented: $isShowingEditSheet) {
             EditWishlistView(item: item)
         }
         
-        // Sheet per Aggiungere il film (Spostamento)
         .sheet(isPresented: $isShowingAddSheet) {
             AddFilmView(
                 prefilledTitle: item.title,

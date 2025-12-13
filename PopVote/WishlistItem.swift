@@ -6,7 +6,6 @@ import SwiftUI
 final class WishlistItem {
     var title: String
     
-    // Usiamo externalStorage per le immagini per non appesantire il database
     @Attribute(.externalStorage)
     var posterData: Data?
     

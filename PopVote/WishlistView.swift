@@ -9,7 +9,6 @@ struct WishlistView: View {
     @State private var searchText = ""
     @State private var showingAddSheet = false
     
-    // Lista filtrata
     var filteredItems: [WishlistItem] {
         if searchText.isEmpty {
             return wishlistItems
@@ -22,9 +21,8 @@ struct WishlistView: View {
     
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) { // VStack principale per impilare Ricerca e Lista
+            VStack(spacing: 0) {
                 
-                // --- BARRA DI RICERCA PERSONALIZZATA (Stile "All Films") ---
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.gray)
@@ -32,19 +30,19 @@ struct WishlistView: View {
                     TextField("Search by title...", text: $searchText)
                         .foregroundColor(.black)
                 }
-                .padding(10) // Spazio interno
-                .background(Color.white) // Sfondo BIANCO come nella foto
-                .clipShape(RoundedRectangle(cornerRadius: 25)) // Bordi arrotondati
-                .padding(.horizontal) // Margine laterale
-                .padding(.bottom, 10) // Un po' di spazio sotto la barra
-                .padding(.top, 10)    // Un po' di spazio sopra la barra
+                .padding(10)
+                .background(Color.white)
+                .clipShape(RoundedRectangle(cornerRadius: 25))
+                .padding(.horizontal)
+                .padding(.bottom, 10)
+                .padding(.top, 10)
                 
-                // --- LISTA ---
+              
                 List {
                     ForEach(filteredItems) { item in
                         NavigationLink(value: item) {
                             HStack(spacing: 15) {
-                                // Immagine piccola
+                              
                                 if let data = item.posterData, let uiImage = UIImage(data: data) {
                                     Image(uiImage: uiImage)
                                         .resizable().scaledToFill()
@@ -58,7 +56,6 @@ struct WishlistView: View {
                                         .clipShape(RoundedRectangle(cornerRadius: 6))
                                 }
                                 
-                                // Titolo
                                 Text(item.title)
                                     .font(.headline)
                             }
@@ -68,9 +65,8 @@ struct WishlistView: View {
                     .onDelete(perform: deleteItems)
                 }
                 .listStyle(.plain)
-                .scrollContentBackground(.hidden) // Rimuove lo sfondo grigio di default della lista
+                .scrollContentBackground(.hidden)
                 
-                // Overlay per lista vuota o ricerca senza risultati
                 .overlay {
                     if wishlistItems.isEmpty {
                         VStack(spacing: 10) {
@@ -86,11 +82,10 @@ struct WishlistView: View {
                     }
                 }
             }
-            .background(Color(red: 0.95, green: 0.85, blue: 0.75)) // Colore sfondo "Sabbia"
+            .background(Color(red: 0.95, green: 0.85, blue: 0.75))
             
-            // --- TITOLO STILE "ALL FILMS" ---
             .navigationTitle("WishList")
-            .navigationBarTitleDisplayMode(.inline) // <<< QUESTO rende il titolo piccolo e centrato
+            .navigationBarTitleDisplayMode(.inline)
             
             .navigationDestination(for: WishlistItem.self) { item in
                 WishlistDetailView(item: item)
@@ -100,7 +95,7 @@ struct WishlistView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: { showingAddSheet = true }) {
                         Image(systemName: "plus")
-                            .foregroundColor(.black) // Colore icona più scuro
+                            .foregroundColor(.black)
                     }
                 }
             }
